@@ -7,6 +7,7 @@
 
 typedef
   struct arc {
+    int dep;
     int dest;
     int poids; } ARC;
 typedef
@@ -25,4 +26,5 @@ typedef
 GRAPHE creergraphe(int nbsommets, int nbarcs);
 void liberergraphe(GRAPHE * pg);
 GRAPHE lecturegraphe(char * fichier);
+void affichegraphe(GRAPHE g);
 #endif
