@@ -44,6 +44,9 @@ GRAPHE lecturegraphe(char * fichier){
   for(i=0; i<nbarcs; i++) {
     fscanf(f,"%d %d %d", &((a+i)->dep), &((a+i)->dest), &((a+i)->poids));
     ((s+((a+i)->dep))->nbarcs)++;
+    if(((s+((a+i)->dep))->nbarcs)==1) { // ajout du pointeur vers la liste d'arcs de chaque sommet
+      ((s+((a+i)->dep))->arcs)=a+i;
+    }
   }
 
 	if (fclose(f) != 0 ) perror("Une erreur s’est produite à la fermeture");
@@ -52,10 +55,13 @@ GRAPHE lecturegraphe(char * fichier){
 }
 
 void affichegraphe(GRAPHE g) {
-  int i;
+  int i, j;
 
-  printf("test :\nnbsommets=%d, nbarcs=%d\nSommets :\n", g.nbsommets, g.nbarcs);
-  for(i=0; i<g.nbsommets; i++) printf("%d |%s|\n", (g.sommets+i)->id, (g.sommets+i)->nom);
-  printf("Arcs :\n");
-  for(i=0; i<g.nbarcs; i++) printf("%d %d %d\n", (g.arcs+i)->dep, (g.arcs+i)->dest, (g.arcs+i)->poids);
+  printf("test du graphe :\nnbsommets=%d, nbarcs=%d\n", g.nbsommets, g.nbarcs);
+  for(i=0; i<g.nbsommets; i++) {
+    printf("%d |%s|\n", (g.sommets+i)->id, (g.sommets+i)->nom);
+    for(j=0; j<(g.sommets+i)->nbarcs; j++) {
+      printf("  %d %d %d\n", ((g.sommets+i)->arcs+j)->dep, ((g.sommets+i)->arcs+j)->dest, ((g.sommets+i)->arcs+j)->poids);
+    }
+  }
 }
