@@ -14,6 +14,8 @@ typedef
   struct sommet {
     int id;
     char nom[255];
+		char file;
+		int poids;
     int nbarcs;
     ARC* arcs; } SOMMET;
 typedef
