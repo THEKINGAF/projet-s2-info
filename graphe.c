@@ -1,23 +1,22 @@
 #include "graphe.h"
 
-GRAPHE creergraphe(int nbsommets, int nbarcs) {
+GRAPHE creer_graphe(int nbsommets, int nbarcs) {
   GRAPHE g;
 
   g.sommets = calloc(nbsommets, sizeof(SOMMET)); // allocation mémoire du tableau des sommets
-  g.arcs = calloc(nbarcs, sizeof(ARC)); // allocation mémoire du tableau des arcs
+  g.arcs = malloc(nbarcs * sizeof(ARC)); // allocation mémoire du tableau des arcs
   g.nbsommets = nbsommets;
   g.nbarcs = nbarcs;
 
   return g;
 }
 
-void liberergraphe(GRAPHE * pg) {
+void liberer_graphe(GRAPHE * pg) {
   free(pg->sommets);
   free(pg->arcs);
-  free(pg);
 }
 
-GRAPHE lecturegraphe(char * fichier){
+GRAPHE lecture_graphe(char * fichier){
   FILE* f;
   GRAPHE g;
   SOMMET * s;
@@ -30,7 +29,7 @@ GRAPHE lecturegraphe(char * fichier){
 
 	fscanf(f,"%d %d", &(nbsommets), &(nbarcs)); fgets(mot,254,f);fgets(mot,254,f);
 
-  g=creergraphe(nbsommets, nbarcs);
+  g=creer_graphe(nbsommets, nbarcs);
   s=g.sommets;
   a=g.arcs;
 
@@ -54,7 +53,7 @@ GRAPHE lecturegraphe(char * fichier){
   return g;
 }
 
-void affichegraphe(GRAPHE g) {
+void affiche_graphe(GRAPHE g) {
   int i, j;
 
   printf("test du graphe :\nnbsommets=%d, nbarcs=%d\n", g.nbsommets, g.nbarcs);

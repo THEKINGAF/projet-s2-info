@@ -1,6 +1,7 @@
 #include "graphe.h"
 #include <limits.h>
 
+// struture de file de sommets utilisé dans l'algo de Bellman optimisé
 struct cellule{
 	SOMMET * elmt;
 	struct cellule* suiv;
@@ -9,18 +10,29 @@ struct cellule{
 typedef struct cellule CELLULE;
 typedef struct cellule* File;
 
+// structure chemin dans laquelle sera stockée le résultat de Bellman
 typedef
-  struct chemin {
+  struct vchemin {
    	ARC * arc;
-		struct chemin* suiv; } CHEMIN;
+		struct vchemin* suiv; } * CHEMIN;
 
-File creer_file(void);
-int file_vide(File f);
-File enfiler(SOMMET * elmt, File f);
-SOMMET * defiler(File* pf);
+// fonctions sur la file de sommets
+File creer_file (void);
+int file_vide (File f);
+File enfiler( SOMMET * elmt, File f);
+SOMMET * defiler (File* pf);
 
-CHEMIN * creer_chemin(void);
-void ajout_arc(ARC * arc, CHEMIN * chemin);
-
+// initialisations de diverses valeurs du graphe
+void init_poids (GRAPHE g, SOMMET * s);
+void init_file (GRAPHE g);
+void init_amont (GRAPHE g);
 int sommet_dans_file (SOMMET * s);
-CHEMIN * bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+
+// fonctions sur les chemins
+CHEMIN creer_chemin (void);
+void liberer_chemin (CHEMIN chemin);
+int chemin_vide (CHEMIN chemin);
+CHEMIN ajout_arc (ARC * arc, CHEMIN chemin);
+void affiche_chemin (GRAPHE g, CHEMIN chemin);
+CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee);

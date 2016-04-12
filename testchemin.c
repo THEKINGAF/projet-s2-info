@@ -2,11 +2,13 @@
 
 int main(int argc, char const *argv[]) {
   GRAPHE g;
+  CHEMIN chemin;
 	int i;
 
-  g = lecturegraphe("graphes/graphe1.txt");
-	bellman (g, g.sommets, g.sommets+4);
-	/*printf("Poids :\n");
-	for(i=0; i<g.nbsommets; i++) printf("%d |%d|\n", (g.sommets+i)->id, (g.sommets+i)->poids);*/
+  g = lecture_graphe("graphes/graphe3.txt");
+	chemin=bellman (g, g.sommets, g.sommets+3);
+  affiche_chemin(g, chemin);
+  liberer_chemin(chemin);
+  liberer_graphe(&g);
   return 0;
 }
