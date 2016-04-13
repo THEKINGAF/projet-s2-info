@@ -118,7 +118,7 @@ CHEMIN ajout_arc(ARC * arc, CHEMIN chemin) {
 
 void affiche_chemin (GRAPHE g, CHEMIN chemin) {
 	CHEMIN c = chemin;
-	int cout = 0;
+	unsigned int cout = 0;
 
 	printf("Chemin :\n");
 	 while (!chemin_vide(c)) {

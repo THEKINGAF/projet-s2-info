@@ -1,6 +1,6 @@
 #include "graphe.h"
 
-GRAPHE creer_graphe(int nbsommets, int nbarcs) {
+GRAPHE creer_graphe(unsigned int nbsommets, unsigned int nbarcs) {
   GRAPHE g;
 
   g.sommets = calloc(nbsommets, sizeof(SOMMET)); // allocation mémoire du tableau des sommets

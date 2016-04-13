@@ -3,7 +3,6 @@
 int main(int argc, char const *argv[]) {
   GRAPHE g;
   CHEMIN chemin;
-	int i;
 
   g = lecture_graphe("graphes/graphe3.txt");
 	chemin=bellman (g, g.sommets, g.sommets+3);

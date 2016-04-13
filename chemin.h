@@ -1,3 +1,6 @@
+#ifndef _CHEMIN
+#define _CHEMIN
+
 #include "graphe.h"
 #include <limits.h>
 
@@ -36,3 +39,4 @@ CHEMIN ajout_arc (ARC * arc, CHEMIN chemin);
 void affiche_chemin (GRAPHE g, CHEMIN chemin);
 CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
 CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+#endif
