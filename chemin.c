@@ -55,22 +55,22 @@ SOMMET * defiler(File* pf){
 // initialisations de diverses valeurs du graphe
 
 void init_poids (GRAPHE g, SOMMET * s) {
-	int i;
+	unsigned int i;
 
 	for (i=0; i<g.nbsommets; i++) {
 		if ((g.sommets+i)==s) (g.sommets+i)->poids=0;
-		else (g.sommets+i)->poids=INT_MAX;
+		else (g.sommets+i)->poids=DBL_MAX;
 	}
 }
 
 void init_file (GRAPHE g) {
-	int i;
+	unsigned int i;
 
 	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->file=0;
 }
 
 void init_amont (GRAPHE g) {
-	int i;
+	unsigned int i;
 
 	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->amont=NULL;
 }
@@ -118,16 +118,16 @@ CHEMIN ajout_arc(ARC * arc, CHEMIN chemin) {
 
 void affiche_chemin (GRAPHE g, CHEMIN chemin) {
 	CHEMIN c = chemin;
-	unsigned int cout = 0;
+	double cout = 0;
 
 	printf("Chemin :\n");
 	 while (!chemin_vide(c)) {
-		printf("(%d)--->(%d) | %d\n",c->arc->dep, c->arc->dest, c->arc->poids);
+		printf("(%d)--->(%d) | %lf\n",c->arc->dep, c->arc->dest, c->arc->poids);
 		cout += c->arc->poids;
 		c=c->suiv;
 	}
 
-	printf("coût total : %d\n", cout);
+	printf("coût total : %lf\n", cout);
 }
 
 CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
@@ -144,7 +144,7 @@ CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
 
 CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
   File f=creer_file();
-  int j;
+  unsigned int j;
   SOMMET * u;
 	SOMMET * v;
   ARC * arc;

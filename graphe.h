@@ -10,16 +10,19 @@ typedef
   struct arc {
     unsigned int dep;
     unsigned int dest;
-    unsigned int poids; } ARC;
+    double poids; } ARC;
 
 // structure de sommet
 typedef
   struct sommet {
     unsigned int id;
+    double lat;
+    double lon;
+    char ligne[255];
     char nom[255];
 		char file;
     ARC * amont;
-		unsigned int poids;
+		double poids;
     unsigned int nbarcs;
     ARC* arcs; } SOMMET;
 

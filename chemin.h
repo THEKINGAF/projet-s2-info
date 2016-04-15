@@ -2,7 +2,7 @@
 #define _CHEMIN
 
 #include "graphe.h"
-#include <limits.h>
+#include <float.h>
 
 // struture de file de sommets utilisé dans l'algo de Bellman optimisé
 struct cellule{
