@@ -122,7 +122,7 @@ void affiche_chemin (GRAPHE g, CHEMIN chemin) {
 
 	printf("Chemin :\n");
 	 while (!chemin_vide(c)) {
-		printf("(%d)--->(%d) | %lf\n",c->arc->dep, c->arc->dest, c->arc->poids);
+		printf("(%d)--->(%d) | %lf| %s\n",c->arc->dep, c->arc->dest, c->arc->poids, (g.sommets + c->arc->dest)->nom);
 		cout += c->arc->poids;
 		c=c->suiv;
 	}
