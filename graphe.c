@@ -34,7 +34,7 @@ GRAPHE lecture_graphe(char * fichier){
   a=g.arcs;
 
   for(i=0; i<nbsommets; i++) {
-    fscanf(f,"%d %lf %lf %s", &((s+i)->id), &((s+i)->lat), &((s+i)->lon), ((s+i)->ligne));
+    fscanf(f,"%d %lf %lf %s ", &((s+i)->id), &((s+i)->lat), &((s+i)->lon), ((s+i)->ligne));
     fgets(mot,254,f); if (mot[strlen(mot)-1]<32) mot[strlen(mot)-1]=0; strcpy((s+i)->nom, mot);
   }
 

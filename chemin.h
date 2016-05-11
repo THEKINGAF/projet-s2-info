@@ -3,6 +3,7 @@
 
 #include "graphe.h"
 #include <float.h>
+#define MAX_STATION 50
 
 // struture de file de sommets utilisé dans l'algo de Bellman optimisé
 struct cellule{
@@ -18,6 +19,11 @@ typedef
   struct vchemin {
    	ARC * arc;
 		struct vchemin* suiv; } * CHEMIN;
+
+typedef
+  struct station {
+   	int * tabid;
+		int n; } STATION;
 
 // fonctions sur la file de sommets
 File creer_file (void);
@@ -39,4 +45,8 @@ CHEMIN ajout_arc (ARC * arc, CHEMIN chemin);
 void affiche_chemin (GRAPHE g, CHEMIN chemin);
 CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
 CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+STATION * construit_station (GRAPHE g, char * nom);
+void affiche_station (GRAPHE g, STATION station);
+double cout_chemin (GRAPHE g, CHEMIN chemin);
+CHEMIN plus_court_chemin (GRAPHE g, char * depart, char * arrivee);
 #endif

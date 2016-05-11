@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[]) {
   GRAPHE g;
 
-  g = lecture_graphe("graphes/graphe1.csv");
+  g = lecture_graphe("graphes/metro.csv");
   affiche_graphe(g);
 
   return 0;

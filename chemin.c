@@ -121,8 +121,8 @@ void affiche_chemin (GRAPHE g, CHEMIN chemin) {
 	double cout = 0;
 
 	printf("Chemin :\n");
-	 while (!chemin_vide(c)) {
-		printf("(%d)--->(%d) | %lf| %s\n",c->arc->dep, c->arc->dest, c->arc->poids, (g.sommets + c->arc->dest)->nom);
+	while (!chemin_vide(c)) {
+		printf("(%d)--->(%d) ligne %s |%s\n",c->arc->dep, c->arc->dest, (g.sommets + c->arc->dest)->ligne, (g.sommets + c->arc->dest)->nom);
 		cout += c->arc->poids;
 		c=c->suiv;
 	}
@@ -140,6 +140,18 @@ CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
 	}
 
 	return chemin;
+}
+
+double cout_chemin (GRAPHE g, CHEMIN chemin) {
+	double cout = 0;
+	CHEMIN c = chemin;
+
+	while (!chemin_vide(c)) {
+		cout += c->arc->poids;
+		c=c->suiv;
+	}
+
+	return cout;
 }
 
 CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
@@ -173,4 +185,74 @@ CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
   }
 
   return reconstruit_chemin(g, depart, arrivee);
+}
+
+void libere_station (STATION * pstation) {
+	free(pstation);	
+}
+
+STATION * construit_station (GRAPHE g, char * nom) {
+	int tab[MAX_STATION], i;
+	int nb;
+
+	STATION * pstation;
+
+	for (i=0; i<g.nbsommets; ++i) {
+		if (!strcmp(nom, (g.sommets+i)->nom)) {
+			tab[nb]=i;
+			++nb;
+		}
+	}
+
+	pstation = malloc(sizeof(*pstation));
+	pstation->tabid=malloc(sizeof(int)*nb);
+	for (i=0; i<nb; ++i) {
+		*((pstation->tabid)+i)=tab[i];
+	}
+	pstation->n=nb;
+
+	return pstation;
+}
+
+void affiche_station (GRAPHE g, STATION station) {
+	int i;
+
+	if (station.n) {
+		printf("Station: %s\n", (g.sommets+station.tabid[0])->nom);
+		for (i=0; i<station.n; ++i) {
+			printf("	ligne %s\n", (g.sommets+station.tabid[i])->ligne);
+		}
+	}
+
+	else {
+		printf("Pas de station à afficher\n");
+	}
+}
+
+CHEMIN plus_court_chemin (GRAPHE g, char * depart, char * arrivee) {
+	STATION * pstation1;
+	STATION * pstation2;
+	CHEMIN chemin;
+	CHEMIN chemin_tmp;
+	int i, j;
+	double cout, cout_tmp;
+
+	pstation1 = construit_station(g, depart);
+	pstation2 = construit_station(g, arrivee);
+
+	for (i=0; i<pstation1->n; ++i) {
+		for (j=0; i<pstation2->n; ++i) {
+			chemin_tmp = bellman (g, g.sommets+(pstation1->tabid[i]), g.sommets+(pstation2->tabid[j]));
+			cout_tmp = cout_chemin(g, chemin_tmp);
+			if (cout_tmp < cout) {
+				chemin = chemin_tmp;
+				cout = cout_tmp;
+			}
+		}
+	}
+
+	/*libere_station(pstation1);
+	libere_station(pstation1);	*/
+	
+	return chemin;
 }
