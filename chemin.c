@@ -1,5 +1,32 @@
 #include "chemin.h"
 
+// initialisations de diverses valeurs du graphe
+
+void init_poids (GRAPHE g, SOMMET * s) {
+	unsigned int i;
+
+	for (i=0; i<g.nbsommets; i++) {
+		if ((g.sommets+i)==s) (g.sommets+i)->poids=0;
+		else (g.sommets+i)->poids=DBL_MAX;
+	}
+}
+
+void init_file (GRAPHE g) {
+	unsigned int i;
+
+	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->file=0;
+}
+
+void init_amont (GRAPHE g) {
+	unsigned int i;
+
+	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->amont=NULL;
+}
+
+int sommet_dans_file (SOMMET * s) {
+	return s->file;
+}
+
 // fonctions sur la file de sommets
 
 File creer_file(void){
@@ -50,33 +77,6 @@ SOMMET * defiler(File* pf){
 	elmt->file=1;
 
 	return elmt;
-}
-
-// initialisations de diverses valeurs du graphe
-
-void init_poids (GRAPHE g, SOMMET * s) {
-	unsigned int i;
-
-	for (i=0; i<g.nbsommets; i++) {
-		if ((g.sommets+i)==s) (g.sommets+i)->poids=0;
-		else (g.sommets+i)->poids=DBL_MAX;
-	}
-}
-
-void init_file (GRAPHE g) {
-	unsigned int i;
-
-	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->file=0;
-}
-
-void init_amont (GRAPHE g) {
-	unsigned int i;
-
-	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->amont=NULL;
-}
-
-int sommet_dans_file (SOMMET * s) {
-	return s->file;
 }
 
 // fonctions sur les chemins
@@ -154,6 +154,78 @@ double cout_chemin (GRAPHE g, CHEMIN chemin) {
 	return cout;
 }
 
+CHEMIN copie_chemin (CHEMIN chemin2) {
+	CHEMIN chemin1;
+	CHEMIN c1;
+	CHEMIN c2=chemin2;
+
+	if (chemin_vide(c2)) return creer_chemin();
+
+	chemin1=calloc(1, sizeof(*chemin1));
+	chemin1->arc=c2->arc;
+	chemin1->suiv=creer_chemin();
+	c2=c2->suiv;
+	c1=chemin1;
+
+	while (!chemin_vide(c2)) {
+		c1->suiv=calloc(1, sizeof(*c1));
+		c1=c1->suiv;
+		c1->arc=c2->arc;
+		c1->suiv=creer_chemin();
+		c2=c2->suiv;
+	}
+
+	return chemin1;
+}
+
+// fonctions sur les stations
+
+void liberer_station (STATION * pstation) {
+	free(pstation->tabid);
+	free(pstation);
+}
+
+STATION * construit_station (GRAPHE g, char * nom) {
+	int tab[MAX_STATION];
+	int nb, i;
+
+	STATION * pstation;
+
+	nb=0;
+	for (i=0; i<g.nbsommets; ++i) {
+		if (!strcmp(nom, (g.sommets+i)->nom)) {
+			tab[nb]=i;
+			++nb;
+		}
+	}
+
+	pstation = malloc(sizeof(*pstation));
+	pstation->tabid=malloc(sizeof(int)*nb);
+	for (i=0; i<nb; ++i) {
+		pstation->tabid[i]=tab[i];
+	}
+	pstation->n=nb;
+
+	return pstation;
+}
+
+void affiche_station (GRAPHE g, STATION station) {
+	int i;
+
+	if (station.n) {
+		printf("Station: %s\n", (g.sommets+station.tabid[0])->nom);
+		for (i=0; i<station.n; ++i) {
+			printf("	ligne %s\n", (g.sommets+station.tabid[i])->ligne);
+		}
+	}
+
+	else {
+		printf("Pas de station à afficher\n");
+	}
+}
+
+// fonctions de construction d'itinéraire
+
 CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
   File f=creer_file();
   unsigned int j;
@@ -187,72 +259,34 @@ CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
   return reconstruit_chemin(g, depart, arrivee);
 }
 
-void libere_station (STATION * pstation) {
-	free(pstation);	
-}
-
-STATION * construit_station (GRAPHE g, char * nom) {
-	int tab[MAX_STATION], i;
-	int nb;
-
-	STATION * pstation;
-
-	for (i=0; i<g.nbsommets; ++i) {
-		if (!strcmp(nom, (g.sommets+i)->nom)) {
-			tab[nb]=i;
-			++nb;
-		}
-	}
-
-	pstation = malloc(sizeof(*pstation));
-	pstation->tabid=malloc(sizeof(int)*nb);
-	for (i=0; i<nb; ++i) {
-		*((pstation->tabid)+i)=tab[i];
-	}
-	pstation->n=nb;
-
-	return pstation;
-}
-
-void affiche_station (GRAPHE g, STATION station) {
-	int i;
-
-	if (station.n) {
-		printf("Station: %s\n", (g.sommets+station.tabid[0])->nom);
-		for (i=0; i<station.n; ++i) {
-			printf("	ligne %s\n", (g.sommets+station.tabid[i])->ligne);
-		}
-	}
-
-	else {
-		printf("Pas de station à afficher\n");
-	}
-}
-
 CHEMIN plus_court_chemin (GRAPHE g, char * depart, char * arrivee) {
 	STATION * pstation1;
 	STATION * pstation2;
-	CHEMIN chemin;
-	CHEMIN chemin_tmp;
+	CHEMIN chemin=creer_chemin();
+	CHEMIN chemin_tmp=creer_chemin();
 	int i, j;
-	double cout, cout_tmp;
+	double cout=DBL_MAX, cout_tmp=0.0;
 
 	pstation1 = construit_station(g, depart);
 	pstation2 = construit_station(g, arrivee);
 
 	for (i=0; i<pstation1->n; ++i) {
-		for (j=0; i<pstation2->n; ++i) {
+		for (j=0; j<pstation2->n; ++j) {
 			chemin_tmp = bellman (g, g.sommets+(pstation1->tabid[i]), g.sommets+(pstation2->tabid[j]));
 			cout_tmp = cout_chemin(g, chemin_tmp);
 			if (cout_tmp < cout) {
-				chemin = chemin_tmp;
+				if (!chemin_vide(chemin)) liberer_chemin(chemin);
+				chemin=copie_chemin(chemin_tmp);
 				cout = cout_tmp;
+			}
+			else {
+					liberer_chemin(chemin_tmp);
 			}
 		}
 	}
 
-	/*libere_station(pstation1);
-	libere_station(pstation1);	*/
-	
+	liberer_station(pstation1);
+	liberer_station(pstation2);
+
 	return chemin;
 }
