@@ -6,20 +6,24 @@ void init_poids (GRAPHE g, SOMMET * s) {
 	unsigned int i;
 
 	for (i=0; i<g.nbsommets; i++) {
+		// poids à 0 pour le sommet s
 		if ((g.sommets+i)==s) (g.sommets+i)->poids=0;
+		// poids au maximum pour les autres
 		else (g.sommets+i)->poids=DBL_MAX;
 	}
 }
 
 void init_file (GRAPHE g) {
 	unsigned int i;
-
+	
+	// mise à 0 du drapeau file de tous les sommets
 	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->file=0;
 }
 
 void init_amont (GRAPHE g) {
 	unsigned int i;
-
+	
+	// mise à NULL de tous les arcs en amont
 	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->amont=NULL;
 }
 
@@ -127,13 +131,14 @@ void affiche_chemin (GRAPHE g, CHEMIN chemin) {
 		c=c->suiv;
 	}
 
-	printf("coût total : %lf\n", cout);
+	printf("coût : %lf\n", cout);
 }
 
 CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
 	CHEMIN chemin = creer_chemin();
 	SOMMET * s = arrivee;
 
+	// on part de l'arrivée et on remonte jusqu'au sommet de départ
 	while(s->amont!=NULL) {
 		chemin=ajout_arc(s->amont, chemin);
 		s=g.sommets+((s->amont)->dep);
@@ -264,21 +269,28 @@ CHEMIN plus_court_chemin (GRAPHE g, char * depart, char * arrivee) {
 	STATION * pstation2;
 	CHEMIN chemin=creer_chemin();
 	CHEMIN chemin_tmp=creer_chemin();
-	int i, j;
+	unsigned int i, j;
 	double cout=DBL_MAX, cout_tmp=0.0;
 
 	pstation1 = construit_station(g, depart);
 	pstation2 = construit_station(g, arrivee);
 
+	// pour tous les sommets de la station de départ
 	for (i=0; i<pstation1->n; ++i) {
+		// pour tous les sommets de la station d'arrivée
 		for (j=0; j<pstation2->n; ++j) {
+			// on calcule le plus court chemin entre les 2 sommets
 			chemin_tmp = bellman (g, g.sommets+(pstation1->tabid[i]), g.sommets+(pstation2->tabid[j]));
 			cout_tmp = cout_chemin(g, chemin_tmp);
+			// si le nouveau chemin est plus court que celui stocké
 			if (cout_tmp < cout) {
+				// alors on détruit celui stocké 
 				if (!chemin_vide(chemin)) liberer_chemin(chemin);
+				// et on le remplace par le nouveau chemin trouvé
 				chemin=copie_chemin(chemin_tmp);
 				cout = cout_tmp;
 			}
+			// sinon on détruit le nouveau chemin
 			else {
 					liberer_chemin(chemin_tmp);
 			}

@@ -1,12 +1,12 @@
 CFLAGS=-c -g
 LDFLAGS=-lm
 
-all: testgraphe testchemin teststation
-
-testgraphe: testgraphe.o graphe.o
+bellman: bellman.o chemin.o graphe.o
 	gcc  -o $@ $^ $(LDFLAGS)
 
-testchemin: testchemin.o chemin.o graphe.o
+all: bellman testgraphe teststation
+
+testgraphe: testgraphe.o graphe.o
 	gcc  -o $@ $^ $(LDFLAGS)
 
 teststation: teststation.o chemin.o graphe.o
@@ -16,4 +16,4 @@ teststation: teststation.o chemin.o graphe.o
 	gcc $(CFLAGS) $<
 
 clean:
-	rm *.o testgraphe testchemin teststation
+	rm *.o bellman testgraphe teststation
