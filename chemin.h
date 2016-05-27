@@ -6,7 +6,7 @@
 #include <ctype.h>
 #define MAX_STATION 500
 
-// struture de file de sommets utilisé dans l'algorithme de Bellman optimisé
+// struture de file de sommets utilisée dans l'algorithme de Bellman optimisé
 struct cellule {
 	SOMMET * elmt;
 	struct cellule* suiv;
@@ -19,14 +19,14 @@ typedef struct cellule* File;
 typedef
   struct vchemin {
    	ARC * arc;
-		struct vchemin* suiv; 
+		struct vchemin* suiv;
 } * CHEMIN;
 
 // structure station qui contient les id des sommets de même nom et leur nombre
 typedef
   struct station {
    	int * tabid;
-		int n; 
+		int n;
 } STATION;
 
 // initialisations de diverses valeurs du graphe
@@ -45,9 +45,8 @@ void liberer_chemin (CHEMIN chemin);
 int chemin_vide (CHEMIN chemin);
 CHEMIN ajout_arc (ARC * arc, CHEMIN chemin);
 void affiche_chemin (GRAPHE g, CHEMIN chemin);
-CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee); // renvoie le chemin après la modification du graphe par Bellman
 double cout_chemin (GRAPHE g, CHEMIN chemin);
-CHEMIN copie_chemin (CHEMIN chemin2); // duplique un chemin et renvoie l'adresse de la copie
 // fonctions sur les stations
 void liberer_station (STATION * pstation);
 STATION * construit_station (GRAPHE g, char * nom); // cherche tous les sommets ayants pour nom "nom"

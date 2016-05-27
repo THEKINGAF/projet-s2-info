@@ -15,14 +15,14 @@ void init_poids (GRAPHE g, SOMMET * s) {
 
 void init_file (GRAPHE g) {
 	unsigned int i;
-	
+
 	// mise à 0 du drapeau file de tous les sommets
 	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->file=0;
 }
 
 void init_amont (GRAPHE g) {
 	unsigned int i;
-	
+
 	// mise à NULL de tous les arcs en amont
 	for (i=0; i<g.nbsommets; i++) (g.sommets+i)->amont=NULL;
 }
@@ -159,30 +159,6 @@ double cout_chemin (GRAPHE g, CHEMIN chemin) {
 	return cout;
 }
 
-CHEMIN copie_chemin (CHEMIN chemin2) {
-	CHEMIN chemin1;
-	CHEMIN c1;
-	CHEMIN c2=chemin2;
-
-	if (chemin_vide(c2)) return creer_chemin();
-
-	chemin1=calloc(1, sizeof(*chemin1));
-	chemin1->arc=c2->arc;
-	chemin1->suiv=creer_chemin();
-	c2=c2->suiv;
-	c1=chemin1;
-
-	while (!chemin_vide(c2)) {
-		c1->suiv=calloc(1, sizeof(*c1));
-		c1=c1->suiv;
-		c1->arc=c2->arc;
-		c1->suiv=creer_chemin();
-		c2=c2->suiv;
-	}
-
-	return chemin1;
-}
-
 // fonctions sur les stations
 
 void liberer_station (STATION * pstation) {
@@ -197,13 +173,16 @@ STATION * construit_station (GRAPHE g, char * nom) {
 	STATION * pstation;
 
 	nb=0;
+	// on parcourt tous les sommets
 	for (i=0; i<g.nbsommets; ++i) {
+		// si le sommet à le nom de la station on stocke son numéro
 		if (!strcmp(nom, (g.sommets+i)->nom)) {
 			tab[nb]=i;
 			++nb;
 		}
 	}
 
+	// on crée l'objet qui contient le nombre de sommets de même nom et leur nombre
 	pstation = malloc(sizeof(*pstation));
 	pstation->tabid=malloc(sizeof(int)*nb);
 	for (i=0; i<nb; ++i) {
@@ -242,16 +221,16 @@ CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee) {
 	init_file(g);
 	init_amont(g);
 
-  f = enfiler(depart, f); // Enfiler le sommet de depart
+  f = enfiler(depart, f); // enfiler le sommet de depart
 
-  while (!file_vide(f)) { //Tant que la file n’est pas vide
-    u = defiler(&f); // Defiler le sommet u
-    for(j=0; j<(u->nbarcs); j++) { // Pour tous les arcs(u,v) partant de ce sommet u
+  while (!file_vide(f)) { // tant que la file n’est pas vide
+    u = defiler(&f); // défiler le sommet u
+    for(j=0; j<(u->nbarcs); j++) { // pour tous les arcs(u,v) partant de ce sommet u
       arc = (u->arcs)+j;
 			v = g.sommets+(arc->dest);
       if ((u->poids + arc->poids) < (v->poids)) {
-        /* si le chemin passant par l’arc u,v est plus court pour
-        rejoindre v que les précédents chemins trouvés mettre à
+        /* si le chemin passant par l’arc(u,v) est plus court pour
+        rejoindre v que les précédents chemins trouvés, alors mettre à
         jour le poids du sommet v */
         v->poids = u->poids + arc->poids;
 				v->amont = arc;
@@ -284,10 +263,10 @@ CHEMIN plus_court_chemin (GRAPHE g, char * depart, char * arrivee) {
 			cout_tmp = cout_chemin(g, chemin_tmp);
 			// si le nouveau chemin est plus court que celui stocké
 			if (cout_tmp < cout) {
-				// alors on détruit celui stocké 
+				// alors on détruit celui stocké
 				if (!chemin_vide(chemin)) liberer_chemin(chemin);
-				// et on le remplace par le nouveau chemin trouvé
-				chemin=copie_chemin(chemin_tmp);
+				// et on le mémorise le nouveau chemin
+				chemin=chemin_tmp;
 				cout = cout_tmp;
 			}
 			// sinon on détruit le nouveau chemin

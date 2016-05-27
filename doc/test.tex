@@ -1,0 +1,233 @@
+\documentclass{report}
+
+\usepackage[colorlinks=true]{hyperref}
+\hypersetup{urlcolor=black,linkcolor=black,citecolor=black,colorlinks=true} 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[frenchb]{babel}
+
+\usepackage{moreverb}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\title{Rapport projet structures de données}
+\author{SUN Quan \and FILIPPI Angelo}
+\date{Année 2015/2016}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Introduction}\indent
+
+L’objectif de ce mini-projet de programmation est d’implémenter l’algorithme de Bellman dans un cas simple : trouver le plus court chemin entre deux stations desservies par différents types de transports en commun. L’algorithme est donné dans le sujet, le but de cette réalisation est donc de nous faire manipuler des structures diverses et ainsi appliquer le cours de structures de données.
+
+L'intégralité du projet est sur GitHub : \url{https://github.com/THEKINGAF/projet-s2-info}.
+
+\chapter{Spécifications}
+\section{Données : description des structures de données}
+\subsection{Graphe}
+
+C’est la structure principale, la plupart des fonctions vont travailler dessus. Elle représente le graphe (sommets et arcs).
+Elle comporte 4 éléments :
+
+\begin{itemize}
+\item le nombre de sommets
+\item le nombre d’arcs
+\item un pointeur sur la liste de sommets
+\item un pointeur sur la liste des arcs
+\end{itemize}
+
+\bigskip 
+Nous avons opté pour une allocation d’un bloc mémoire pour chaque liste plutôt que des listes chaînés comme le proposait le sujet. 
+
+Notre décision vient du fait que le nombre d’arcs et de sommets sont des informations connues (premières lignes du fichier, et la lecture du fichier est la première opération réalisée par le programme). De plus, le programme n’ajoute pas de sommets ni d’arcs. Or, d’après le cours de structures de données, il est préférable d’opter pour un tableau de valeurs contigües dans cette situation, un tableau occupe moins de mémoire (pas besoin de pointeur sur l’élément suivant) et réduit les accès à la mémoire vive en permettant au processeur d’utiliser le cache.
+
+\subsection{Sommet}
+
+La structure sommet doit contenir les informations stockées dans le fichier de description du graphe : 
+\begin{itemize}
+\item id
+\item latitude
+\item longitude
+\item nom de la ligne
+\item nom de la station
+\end{itemize}
+\bigskip
+ainsi que de nombreuses autres informations utiles pour le programme ou pour l’optimisation de l’algorithme de Bellman :
+\begin{itemize}
+
+\item présence ou non dans la file (optimisation de l’algorithme de Bellman)
+\item pointeur vers l'arc qui arrive à ce sommet (reconstruction du chemin)
+\item poids
+\item nombre d’arcs partant de ce sommet
+\item pointeur sur la liste des arcs partant de ce sommet
+
+\end{itemize}
+\subsection{Arc}
+
+Le structure d’arc contient simplement les informations sur les arcs du fichier :
+\begin{itemize}
+
+\item sommet de départ
+\item sommet de d'arrivée
+\item poids de l’arc
+
+\end{itemize}
+
+\section{Fonctions : entête et rôle des fonctions essentielles}
+
+Les fonctions d’affichage, de test (vide ou non), d’initialisation, d’allocation et de libération mémoire ne seront pas détaillées dans cette section.
+
+Voici le prototype de la fonction principale :
+
+\begin{lstlisting}
+CHEMIN bellman (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+\end{lstlisting}
+
+Cette fonction est une retranscription exacte de l’algorithme de Bellman tel qu’il est décrit dans le sujet, elle travaille sur le graphe g afin de mettre à jour les poids des sommets dans le but de déterminer le plus court chemin qui va du sommet depart au sommet arrivee.
+
+\begin{lstlisting}
+CHEMIN reconstruit_chemin (GRAPHE g, SOMMET * depart, SOMMET * arrivee);
+\end{lstlisting}
+
+La fonction bellman utilise la fonction reconstruit\_chemin qui renvoie le chemin menant du sommet depart au sommet arrivee après avoir calculé les poids les plus faibles pour chaque sommet à l’aide de l’algorithme de Bellman.
+
+Dans un second temps, il faut une fonction qui détermine le plus court chemin entre deux stations, c’est à dire en les désignant non plus par leur id mais par leur nom. Elle a pour prototype :
+
+\begin{lstlisting}
+CHEMIN plus_court_chemin (GRAPHE g, char * depart, char * arrivee);
+\end{lstlisting}
+
+Cette fonction utilise simplement la fonction bellman précédente sur toutes les combinaisons de sommets de départ et d’arrivée homonymes. Pour déterminer tous les sommets correspondant à un nom on utilise la fonction suivante : 
+
+\begin{lstlisting}
+STATION * construit_station (GRAPHE g, char * nom);
+\end{lstlisting}
+
+Elle renvoie un objet STATION qui liste les id des sommets nommés nom.
+
+\section{Tests : quels sont les tests prévus}
+
+Nous allons tester progressivement nos fonctions. Après avoir écrit les structures et les fonctions nécessaires à la lecture du fichier nous testerons la structure du graphe avec une fonction d’affichage qui devra parcourir les sommets et les arcs afin de vérifier que le fichier ait bien été lu et que les structures soit correctement remplies.
+
+Après s’être assurés que nos structures contenaient des valeurs valides, nous testerons l’algorithme de Bellman appelé avec les numéros des sommets.
+Une fois l’algorithme de Bellman fonctionnel, il faudra réaliser les fonctions permettant d’appeler l’algorithme non pas via les numéros des sommets mais par leurs noms.
+
+\section{Répartition du travail et planning prévu : qui fait quoi et quand ?}
+\chapter{Implémentation}
+\section{Etat du logiciel : ce qui fonctionne, ce qui ne fonctionne pas}
+Le logiciel fonctionne correctement, il est capable de donner le plus court chemin entre deux stations désignés par leurs noms.
+\section{Tests effectués}
+Les premiers essais ont été réalisés à l'aide du programme \textbf{testgraphe}. Ils avaient pour objectif de valider la structure de graphe et la lecture du fichier.
+
+Les tests suivants portaient sur l'algorithme de Bellman en lui-même. Une fois fonctionnel il a été optimisé.
+Il a ensuite fallu tester la construction de la structure STATION qui, une fois vérifiée nous a permis de coder la recherche de plus court chemin à partir des noms. Nous avons ainsi pu vérifier le programme dans son intégralité.
+
+Il a alors été possible de faire des test plus poussés, par exemple tester les fuites mémoires sur l'ensemble du programme : 
+\begin{verbatimtab}
+$ valgrind --leak-check=full  ./bellman graphes/metro.csv "Montparnasse Bienvenue" 
+"Porte Maillot"
+==5431== Memcheck, a memory error detector
+==5431== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==5431== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==5431== Command: ./bellman graphes/metro.csv Montparnasse\ Bienvenue Porte\ Maillot
+==5431== 
+Chemin :
+(361)--->(360) ligne M13 |Duroc
+(360)--->(359) ligne M13 |Saint-Francois Xavier
+(359)--->(358) ligne M13 |Varenne
+(358)--->(357) ligne M13 |Invalides
+(357)--->(356) ligne M13 |Champs Élysées, Clémenceau
+(356)--->(9) ligne M1 |Champs Élysées, Clémenceau
+(9)--->(8) ligne M1 |Franklin D. Roosevelt
+(8)--->(7) ligne M1 |George V
+(7)--->(6) ligne M1 |Charles de Gaulle, Étoile
+(6)--->(5) ligne M1 |Argentine
+(5)--->(4) ligne M1 |Porte Maillot
+coût : 1078.123449
+==5431== 
+==5431== HEAP SUMMARY:
+==5431==     in use at exit: 0 bytes in 0 blocks
+==5431==   total heap usage: 6,434 allocs, 6,434 frees, 550,272 bytes allocated
+==5431== 
+==5431== All heap blocks were freed -- no leaks are possible
+==5431== 
+==5431== For counts of detected and suppressed errors, rerun with: -v
+==5431== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+\end{verbatimtab}
+
+Comme on peut le voir sur le résultat ci-dessus, tout l'espace mémoire alloué a été libéré à la fin de l'éxecution.
+\section{Exemple d'exécution}
+\begin{verbatimtab}
+$ bellman graphes/metro.csv "Montparnasse Bienvenue" "Porte Maillot"
+Chemin :
+(361)--->(360) ligne M13 |Duroc
+(360)--->(359) ligne M13 |Saint-Francois Xavier
+(359)--->(358) ligne M13 |Varenne
+(358)--->(357) ligne M13 |Invalides
+(357)--->(356) ligne M13 |Champs Élysées, Clémenceau
+(356)--->(9) ligne M1 |Champs Élysées, Clémenceau
+(9)--->(8) ligne M1 |Franklin D. Roosevelt
+(8)--->(7) ligne M1 |George V
+(7)--->(6) ligne M1 |Charles de Gaulle, Étoile
+(6)--->(5) ligne M1 |Argentine
+(5)--->(4) ligne M1 |Porte Maillot
+coût : 1078.123449
+\end{verbatimtab}
+\section{Les optimisations et les extensions réalisées}
+La première optimisation que nous avons implémentée est celle proposée par le sujet : utiliser une file pour stocker les sommets dont le coût a été modifié à l'itération précédente afin de réduire le champs des arcs à traiter. Pour ce faire nous avons applisué l'astuce également suggérée par le sujet qui consiste à rajouter un champ à la structure SOMMET afin de repérer la présence ou non du sommet dans la file.
+Nous avons utilisé le code produit dans les séances précédentes pour la structure File : 
+\begin{lstlisting}
+// struture de file de sommets utilisee dans l'algorithme de Bellman optimise
+struct cellule \{
+	SOMMET * elmt;
+	struct cellule* suiv;
+\};
+
+typedef struct cellule CELLULE;
+typedef struct cellule* File;
+
+// fonctions sur la file de sommets
+File creer_file (void);
+int file_vide (File f);
+File enfiler( SOMMET * elmt, File f);
+SOMMET * defiler (File* pf);
+\end{lstlisting}
+\chapter{Suivi}
+\section{Problèmes rencontrés}
+\section{Planning effectif}
+\section{Qu'avons nous appris}
+\section{Suggestion d'améliorations du projet}
+Notre système de recherche par nom est la première optimisation à réaliser, en effet, appliquer l'algorithme de Belman à toutes les combinaison sommet de départ/sommet d'arrivée portant le même nom n'est pas très efficace.
+	
+Une idée consiste à modifier le graphe pour créer des arcs de poids nul entre les sommets portant de même nom afin de représenter le fait que, physiquement, ces sommets désignent une seule et unique station. Cette solution n'est pas idéale car elle oblige à modifier le graphe et, du fait de la création de liaison artificiellement, implique des modifications de la fonction de création de chemin et d'affichage du chemin : les arcs ainsi créé ne doivent pas apparaîtrent dans le chemin donné à l'utilisateur.
+
+\bigskip
+Il est également possible de réaliser un affichage graphique du chemin et du graphe du métro mais créer une interface graphique capable d'afficher un très grand nombre de stations et de liaisons tout en restant lisible demande un temps considérable.
+\chapter{Conclusion}
+\end{document}
