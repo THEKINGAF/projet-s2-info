@@ -4,9 +4,9 @@ int main(int argc, char * argv[]) {
   GRAPHE g;
   CHEMIN chemin;
 
-	if(argc!=4) {
-		printf("Utilisation :\nbellman fichier_graphe départ arrivée\n");
-		return 0;
+  if(argc!=4) {
+    printf("Utilisation :\nbellman fichier_graphe départ arrivée\n");
+    return 0;
 	}
 
  	g = lecture_graphe(argv[1]);

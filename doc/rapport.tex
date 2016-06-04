@@ -32,7 +32,7 @@
   tabsize=3
 }
 
-\title{Rapport projet structures de données}
+\title{Rapport de projet - programmation semestre 2}
 \author{SUN Quan \and FILIPPI Angelo}
 \date{Année 2015/2016}
 
@@ -139,6 +139,25 @@ Après s’être assurés que nos structures contenaient des valeurs valides, no
 Une fois l’algorithme de Bellman fonctionnel, il faudra réaliser les fonctions permettant d’appeler l’algorithme non pas via les numéros des sommets mais par leurs noms.
 
 \section{Répartition du travail et planning prévu : qui fait quoi et quand ?}
+
+Nous avons prévu de découper le travail en 4 parties :
+
+\bigskip
+2 premières séances :
+\begin{itemize}
+\item lecture du graphe
+\item structures graphe, sommet et arc
+\end{itemize}
+
+\medskip
+2 dernières séances :
+\begin{itemize}
+\item algorithme de Bellman + optimisations
+\item structure chemin, station et recherche par nom
+\end{itemize}
+\bigskip
+Sur chacune des paires de séances chaque élève travaille sur un des deux points listés et on met en commun à la fin de chaque séance. En fonction de l'avancement on décide ou non de travailler en dehors des séances.
+
 \chapter{Implémentation}
 \section{Etat du logiciel : ce qui fonctionne, ce qui ne fonctionne pas}
 Le logiciel fonctionne correctement, il est capable de donner le plus court chemin entre deux stations désignés par leurs noms.
@@ -220,8 +239,14 @@ SOMMET * defiler (File* pf);
 \end{lstlisting}
 \chapter{Suivi}
 \section{Problèmes rencontrés}
+En dehors des erreurs de syntaxes et d'inattention  qui sont apparues aux premières compilation, nous avons rencontré des fuites mémoires au cours des tests individuels des fonctions. Nous avons alors utiliser Valgrind pour trouver la source de ces erreurs : des pointeurs qui étaient perdus et donc des allocations mémoires qui n'étaient jamais libérées.
+
 \section{Planning effectif}
+Le planning défini en début de projet à été respecté en ayant recourt à deux séances non encadrées. Les bilans réalisés à chaque fin de séance nous ont permis de suivre précisément l'avancement au sein du binôme.
+
 \section{Qu'avons nous appris}
+En plus d'avoir appliqué les notions vues en cours sur les structures, nous avons appris à utiliser les programmes gdb et Valgrind destinés au débogage et à la visualisation des fuites mémoires.  L'utilisation de GitHub pour la gestion du code est également un point enrichissant de ce projet.
+
 \section{Suggestion d'améliorations du projet}
 Notre système de recherche par nom est la première optimisation à réaliser, en effet, appliquer l'algorithme de Belman à toutes les combinaison sommet de départ/sommet d'arrivée portant le même nom n'est pas très efficace.
 	
@@ -230,4 +255,6 @@ Une idée consiste à modifier le graphe pour créer des arcs de poids nul entre
 \bigskip
 Il est également possible de réaliser un affichage graphique du chemin et du graphe du métro mais créer une interface graphique capable d'afficher un très grand nombre de stations et de liaisons tout en restant lisible demande un temps considérable.
 \chapter{Conclusion}
+
+	Ce projet nous as permis de comprendre le cours de structures de données en l'appliquant à un problème intéressant en informatique et dans d'autres domaines : déterminer le plus court chemin dans un graphe. Dans notre cas, l'algorithme de Bellman a été appliqué à un réseau de transports en commun mais cette situation peut être retrouvée en routage.
 \end{document}
